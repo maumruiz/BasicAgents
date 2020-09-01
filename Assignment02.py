@@ -131,16 +131,19 @@ class ReflexAgent(Agent):
 
 '''_____________________________________________________________________________________________'''
 
+'''Creates a Gold as a subclass of Thing'''
 class Gold(Thing):
     pass
 
 '''_____________________________________________________________________________________________'''
 
+'''Creates a Trap as a subclass of Thing'''
 class Trap(Thing):
     pass
 
 '''_____________________________________________________________________________________________'''
 
+'''Creates a GridEnvironment as a subclass of Environment'''
 class GridEnvironment(Environment):
     def __init__(self, width=5, height=5):
         super(GridEnvironment, self).__init__()
