@@ -48,11 +48,6 @@ class FullyObservableEnvironment(Environment):
         print(self)
 
         for agent in self.agents:
-            # if isinstance(agent, ModelBasedAgent):
-            #     percepts = self.percept(agent)
-            #     agent.update_internal_state(percepts, self.radius_of_vision)
-            #     agent.print_internal_state()
-
             percepts = self.percept(agent)
 
             if isinstance(agent, ModelBasedAgent):

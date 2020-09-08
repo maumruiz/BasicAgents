@@ -22,6 +22,7 @@ class PartiallyObservableEnvironment(FullyObservableEnvironment):
         return things_near
     
     def percepts_from(self, agent, location, tclass=Thing):
+        ''' Get percepts from a defined location'''
         things = self.list_things_at((location[0], location[1]))
         percepts = [(p, distance_m(agent.location, p.location), p.location) for p in things if not isinstance(p, Agent)]
         return percepts

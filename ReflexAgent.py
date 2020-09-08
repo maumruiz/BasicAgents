@@ -58,16 +58,15 @@ class ReflexAgent(Agent):
     
     def get_gold(self):
         '''States when the agent enters a cell with a gold'''
-        '''Gives 10 point from the agent'''
         self.performance += 10
 
     def fall_in_trap(self):
-        '''Takes 5 points from the agent'''
+        '''Takes 5 points from the agent when the agent enter a cell with traps'''
         self.performance -= 5
 
     def turn_clockwise(self):
-        '''States when the agent turns'''
-        '''Reduces 1 point from the agent'''
+        '''States when the agent turns. 
+        Reduces 1 point from the agent'''
         self.performance -= 1
         
         '''Turns its direction clockwise'''

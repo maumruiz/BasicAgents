@@ -23,13 +23,4 @@ if __name__ == "__main__":
         trap = Trap()
         environment.add_thing(trap)    
 
-    # print('---------------------------')
-    # print('Initial State of Environment')
-    # print('---------------------------')
-    # print("Agent state: %s" % agent)
-    # print("Agent performance: %s" % agent.performance)
-    # print('')
-    # print('Environment:')
-    # print(environment)
-
     environment.run()

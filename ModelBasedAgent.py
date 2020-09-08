@@ -58,17 +58,10 @@ class ModelBasedAgent(Agent):
     def get_gold(self):
         '''Gives 10 point from the agent'''
         self.performance += 10
-        
-        # x, y = self.location
-        # self.internal_state[x][y]['Gold'] -= 1
 
     def fall_in_trap(self):
         '''Takes 5 points from the agent'''
         self.performance -= 5
-
-        # x, y = self.location
-        # self.internal_state[x][y]['Traps'] -= 1
-        # print("Fall in Trap")
 
     '''States when the agent turns'''
     def turn_clockwise(self):
@@ -140,7 +133,6 @@ class ModelBasedAgent(Agent):
     
     def program(self, percepts):
         '''Reads the percept and returns the action'''
-        # self.update_internal_state(percepts)
 
         golds = [p for p in percepts if isinstance(p[0], Gold)]
 
