@@ -17,8 +17,11 @@ class FullyObservableEnvironment(Environment):
     def __str__(self):
         grid = self.get_grid()
         gridStr = []
+        gridStr.append('     0       1       2       3       4')
+        gridStr.append('  (A G T) (A G T) (A G T) (A G T) (A G T)')
         for r in range(self.width):
             row = ''
+            row += str(r)+' '
             for c in range(self.height):
                 gold = 0
                 traps = 0
