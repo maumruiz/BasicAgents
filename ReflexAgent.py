@@ -4,6 +4,9 @@ from agents import *
 from Objects import *
 
 class ReflexAgent(Agent):
+    '''
+    Initializes the Agent's variables. Every Agent starts being alive with a performance of 100 and facing the up direction.
+    '''
     def __init__(self):
         self.location = (3,3)
         self.direction = 'U'
@@ -20,11 +23,16 @@ class ReflexAgent(Agent):
         return "(%s, %s, %s)" % (self.location[0], self.location[1], facing[self.direction])
 
     def print_percepts(self, percepts, radius):
+        '''
+        Receives a list of percepts around the player and show them.
+        '''
         print("Percept")
         
         x, y = self.location
 
+        '''Gets all the gold perceived around the player'''
         gold_grid = [[0 for row in range(5)] for col in range(5)]
+        '''Gets all the traps perceived around the player'''
         traps_grid = [[0 for row in range(5)] for col in range(5)]
 
         for percept in percepts:

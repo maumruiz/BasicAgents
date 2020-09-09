@@ -5,12 +5,16 @@ from agents import *
 from Objects import *
 
 class ModelBasedAgent(Agent):
+    '''
+    Initializes the Agent's variables. Every Agent starts being alive with a performance of 100 and facing the right direction.
+    '''
     def __init__(self):
-        self.location = (0,0)
-        self.direction = 'R'
+        self.location = (3,3)
+        self.direction = 'U'
         self.performance = 100
         self.alive = True
 
+        '''Initialized the Agent's internal state which will be helpful in case of a Partially Observable Enrivonment'''
         self.internal_state = [[{'Visited': -1, 'Gold': -1, 'Traps': -1} for row in range(5)] for col in range(5)]
     
     def __str__(self):
@@ -19,6 +23,9 @@ class ModelBasedAgent(Agent):
         return "(%s, %s, %s)" % (self.location[0], self.location[1], facing[self.direction])
     
     def print_internal_state(self):
+        '''
+        Show the actual internal state of the Agent.
+        '''
         print('Agent internal state')
         for r in range(len(self.internal_state)):
             row = ''
@@ -33,6 +40,9 @@ class ModelBasedAgent(Agent):
             print(row)
 
     def print_percepts(self, percept, radius):
+        '''
+        Receives a list of percepts around the player and show them.
+        '''
         print("Percept")
         
         x, y = self.location

@@ -6,6 +6,11 @@ from ModelBasedAgent import ModelBasedAgent
 from agents import *
 from Objects import *
 
+'''
+This class is a representation of a Fully Observable Environment which let
+the Agents' percepts have complete access to the multidimensional states of
+the task environment.
+'''
 class FullyObservableEnvironment(Environment):
     '''Creates a FullyObservableEnvironment as a subclass of Environment'''
     def __init__(self, width=5, height=5, radius=4):

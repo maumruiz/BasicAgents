@@ -5,7 +5,16 @@ from ModelBasedAgent import ModelBasedAgent
 from agents import *
 from Objects import *
 
+'''
+This class is a representation of a Partially Observable Environment
+where some of the information required for optimal decision making is
+hidden until it emerges due to Agents' level activity.
+'''
 class PartiallyObservableEnvironment(FullyObservableEnvironment):
+    '''Creates a PartiallyObservableEnvironment as a subclass of FullyObservableEnvironment,
+    they have the same function but the Partially Observable one is limited to a radius of information
+    around the agent.
+    '''
     def __init__(self):
         FullyObservableEnvironment.__init__(self)
         self.radius_of_vision = 1
