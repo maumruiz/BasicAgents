@@ -9,12 +9,12 @@ class ModelBasedAgent(Agent):
     Initializes the Agent's variables. Every Agent starts being alive with a performance of 100 and facing the right direction.
     '''
     def __init__(self):
-        self.location = (3,3)
-        self.direction = 'U'
+        self.location = (0,0)
+        self.direction = 'R'
         self.performance = 100
         self.alive = True
 
-        '''Initialized the Agent's internal state which will be helpful in case of a Partially Observable Enrivonment'''
+        '''Initialized the Agent's internal state which will be more helpful in case of a Partially Observable Enrivonment'''
         self.internal_state = [[{'Visited': -1, 'Gold': -1, 'Traps': -1} for row in range(5)] for col in range(5)]
     
     def __str__(self):
@@ -24,11 +24,13 @@ class ModelBasedAgent(Agent):
     
     def print_internal_state(self):
         '''
-        Show the actual internal state of the Agent.
+        Show the actual internal state of the Agent, with information about the visited cells, gold and traps discovered by previous steps.
         '''
-        print('Agent internal state')
+        print('Agent internal state:')
+        print('     0       1       2       3       4')
+        print('  (A G T) (A G T) (A G T) (A G T) (A G T)')
         for r in range(len(self.internal_state)):
-            row = ''
+            row = '%s ' % r
             row2 = ''
             for c in range(len(self.internal_state[r])):
                 visited = '?' if self.internal_state[r][c]['Visited'] < 0 else '-' if self.internal_state[r][c]['Visited'] == 0 else 'V'
@@ -41,39 +43,47 @@ class ModelBasedAgent(Agent):
 
     def print_percepts(self, percept, radius):
         '''
-        Receives a list of percepts around the player and show them.
+        Receives a list of percepts around the player and show them in a grid form.
         '''
-        print("Percept")
+        print("Percept:")
         
         x, y = self.location
 
+        row = '  '
+        for c in range(-radius, radius+1):
+            if self.is_inbounds((0, y+c)):
+                row += '   %s    ' % (y+c)                    
+        print(row)
+
         for r in range(-radius, radius+1):
-            row = ''
-            for c in range(-radius, radius+1):
-                if self.is_inbounds((x+r, y+c)):
-                    agentState = '-' if x != x+r or y != y+c else self.direction
+            if self.is_inbounds((x+r, 0)):
+                row = '%s ' % (x+r)
+                for c in range(-radius, radius+1):
+                    if self.is_inbounds((x+r, y+c)):
+                        agentState = '-' if x != x+r or y != y+c else self.direction
 
-                    cellGold = self.internal_state[x+r][y+c]['Gold']
-                    gold = '-' if cellGold < 1 else cellGold
+                        cellGold = self.internal_state[x+r][y+c]['Gold']
+                        gold = '-' if cellGold < 1 else cellGold
 
-                    cellTraps = self.internal_state[x+r][y+c]['Traps']
-                    traps = '-' if cellTraps < 1 else cellTraps
+                        cellTraps = self.internal_state[x+r][y+c]['Traps']
+                        traps = '-' if cellTraps < 1 else cellTraps
 
-                    row += '(%s %s %s) ' % (agentState, gold, traps)
-                
-            print(row)
+                        row += '(%s %s %s) ' % (agentState, gold, traps)
+                    
+                print(row)
         print('')
     
-    '''States when the agent enters a cell with a gold'''
+    '''Action when the agent enters a cell with a gold'''
     def get_gold(self):
         '''Gives 10 point from the agent'''
         self.performance += 10
 
+    '''Action when the agent falls into a trap'''
     def fall_in_trap(self):
         '''Takes 5 points from the agent'''
         self.performance -= 5
 
-    '''States when the agent turns'''
+    '''State when the agent recieve the action to turn'''
     def turn_clockwise(self):
         '''Reduces 1 point from the agent'''
         self.performance -= 1
@@ -82,6 +92,7 @@ class ModelBasedAgent(Agent):
         turns = {'U': 'R', 'R': 'D', 'D': 'L', 'L': 'U'}
         self.direction = turns[self.direction]
 
+    '''State when the agent recieve the action to advance'''
     def move_forward(self):
         '''Reduces 1 point from the agent'''
         self.performance -= 1
@@ -90,7 +101,6 @@ class ModelBasedAgent(Agent):
         '''And checks that the agents does not move outside the grid'''
         r = self.location[0]
         c = self.location[1]
-
         if self.direction == "U" and r != 0:
             r = r-1
         elif self.direction == "R" and c != 4:
@@ -104,24 +114,24 @@ class ModelBasedAgent(Agent):
         '''Reduces the performance if the agent enters a visited cell'''
         if self.internal_state[r][c]['Visited'] == 1:
             self.performance -= 2
-        # else:
-        #     self.internal_state[r][c]['Visited'] = 1
 
     def is_inbounds(self, location):
         '''Checks to make sure that the location is inbounds (within walls if we have walls)'''
         x,y = location
         return not (x < 0 or x >= 5 or y < 0 or y >= 5)
     
-    # Only works for partially observable environment
+    # Update the internal state of the agent, with the new information after executing an action
     def update_internal_state(self, percepts, radius=4):
-        # Delete internal state in percept radious
+        
         x, y = self.location
         near_locations = []
 
+        # Find the locations where the agent need to update its internal state
         for r in range(-radius, radius+1):
             for c in range(-radius, radius+1):
                 near_locations.append((x+r, y+c))
 
+        # Delete internal state in percept radious
         for loc in near_locations:
             if self.is_inbounds(loc):
                 cell = self.internal_state[loc[0]][loc[1]]
@@ -138,7 +148,8 @@ class ModelBasedAgent(Agent):
                 self.internal_state[xPercept][yPercept]['Traps'] += 1
             if isinstance(percept[0], Gold):
                 self.internal_state[xPercept][yPercept]['Gold'] += 1
-            
+        
+        # Mark the current agent location as visited
         self.internal_state[x][y]['Visited'] = 1
     
     def program(self, percepts):
@@ -155,7 +166,7 @@ class ModelBasedAgent(Agent):
                         distance = distance_m((row, column), self.location)
                         golds.append(((row,column), distance, (row,column)))
             
-            # sort by distance
+            # Sort gold by distance
             golds = sorted(golds, key=lambda tup: tup[1])
 
         # If there is still no gold found, take default behaviour
@@ -181,7 +192,7 @@ class ModelBasedAgent(Agent):
         rAgent = self.location[0]
         cAgent = self.location[1]
 
-        # If there is still gold in the cell, stay
+        # If there is gold in the current location, stay
         if cGold == cAgent and rGold == rAgent:
             return 'STAY'
         

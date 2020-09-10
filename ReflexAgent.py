@@ -5,15 +5,16 @@ from Objects import *
 
 class ReflexAgent(Agent):
     '''
-    Initializes the Agent's variables. Every Agent starts being alive with a performance of 100 and facing the up direction.
+    Initializes the Agent's variables. Every Agent starts being alive with a performance of 100 and facing the right direction.
     '''
     def __init__(self):
-        self.location = (3,3)
-        self.direction = 'U'
+        self.location = (0,0)
+        self.direction = 'R'
         self.performance = 100
         self.alive = True
 
-        '''Declares the internal state to count the visited cells into the performance'''
+        '''Declares the internal state to register the visited cells into the performance, which will only work to
+            penalize if it moves to a previously visited cell'''
         self.visited_cells = np.full((5, 5), False)
         self.visited_cells[self.location[0]][self.location[1]] = True
 
@@ -42,21 +43,29 @@ class ReflexAgent(Agent):
             if isinstance(percept[0], Gold):
                 gold_grid[xPercept][yPercept] += 1
 
+        row = '  '
+        for c in range(-radius, radius+1):
+            if self.is_inbounds((0, y+c)):
+                row += '   %s    ' % (y+c)                    
+        print(row)
+
         for r in range(-radius, radius+1):
-            row = ''
-            for c in range(-radius, radius+1):
-                if self.is_inbounds((x+r, y+c)):
-                    agentState = '-' if x != x+r or y != y+c else self.direction
+            if self.is_inbounds((x+r, 0)):
+                row = '%s ' % (x+r)
+            
+                for c in range(-radius, radius+1):
+                    if self.is_inbounds((x+r, y+c)):
+                        agentState = '-' if x != x+r or y != y+c else self.direction
 
-                    cellGold = gold_grid[x+r][y+c]
-                    gold = '-' if cellGold < 1 else cellGold
+                        cellGold = gold_grid[x+r][y+c]
+                        gold = '-' if cellGold < 1 else cellGold
 
-                    cellTraps = traps_grid[x+r][y+c]
-                    traps = '-' if cellTraps < 1 else cellTraps
+                        cellTraps = traps_grid[x+r][y+c]
+                        traps = '-' if cellTraps < 1 else cellTraps
 
-                    row += '(%s %s %s) ' % (agentState, gold, traps)
-                
-            print(row)
+                        row += '(%s %s %s) ' % (agentState, gold, traps)
+                    
+                print(row)
         print('')
 
     def is_inbounds(self, location):
@@ -102,7 +111,6 @@ class ReflexAgent(Agent):
 
         '''Reduces the performance if the agent enters a visited cell'''
         if self.visited_cells[r][c]:
-            print('Step in visited cell')
             self.performance -= 2
         else:
             self.visited_cells[r][c] = True
@@ -133,7 +141,7 @@ class ReflexAgent(Agent):
         rAgent = self.location[0]
         cAgent = self.location[1]
 
-        # If there is still gold in the cell, stay
+        # If there is gold in the current location, stay
         if cGold == cAgent and rGold == rAgent:
             return 'STAY'
         
